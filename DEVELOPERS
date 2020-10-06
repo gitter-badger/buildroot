@@ -254,7 +254,13 @@ N:	Anthony Viallard <viallard@syscom-instruments.com>
 F:	package/gnuplot/
 
 N:	Antoine Ténart <antoine.tenart@bootlin.com>
+F:	package/libselinux/
+F:	package/refpolicy/
 F:	package/wf111/
+F:	support/testing/tests/core/test_selinux/
+F:	support/testing/tests/core/test_selinux.py
+F:	support/testing/tests/init/test_systemd_selinux/
+F:	support/testing/tests/init/test_systemd_selinux.py
 
 N:	Antony Pavlov <antonynpavlov@gmail.com>
 F:	package/lsscsi/
@@ -1136,6 +1142,7 @@ F:	package/python-sip/
 F:	package/uhd/
 
 N:	Heiko Thiery <heiko.thiery@gmail.com>
+F:	package/altera-stapl/
 F:	package/ipmitool/
 F:	package/libnetconf2/
 F:	package/libyang/
@@ -2427,6 +2434,9 @@ F:	package/tunctl/
 F:	package/ubus/
 F:	package/wolfssl/
 
+N:	Shyam Saini <shyam.saini@savoirfairelinux.com>
+F:	package/cukinia/
+
 N:	Simon Dawson <spdawson@gmail.com>
 F:	boot/at91bootstrap3/
 F:	package/cppzmq/
@@ -2527,6 +2537,9 @@ F:	configs/rock_pi_n8_defconfig
 F:	configs/rock_pi_n10_defconfig
 F:	configs/rockpro64_defconfig
 F:	package/arm-gnu-a-toolchain/
+
+F:	Sven Fischer <sven@leiderfischer.de>
+N:	package/qt5/qt5remoteobjects/
 
 N:	Sven Haardiek <sven.haardiek@iotec-gmbh.de>
 F:	package/lcdproc/
