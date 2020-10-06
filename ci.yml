@@ -20,4 +20,4 @@ buildroot-pipeline:
     include:
       - artifact: generated-gitlab-ci.yml
         job: generate-gitlab-ci-yml
-    strategy: depend
+    strategy: echo
