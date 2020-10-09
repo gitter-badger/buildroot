@@ -1,23 +1,25 @@
 # Makefile for buildroot
-#
-# Copyright (C) 1999-2005 by Erik Andersen <andersen@codepoet.org>
-# Copyright (C) 2006-2014 by the Buildroot developers <buildroot@uclibc.org>
-# Copyright (C) 2014-2020 by the Buildroot developers <buildroot@buildroot.org>
-#
-# This program is free software; you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation; either version 2 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-# General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-#
+
+/
+* Copyright (C) 1999-2005 by Erik Andersen <andersen@codepoet.org>
+* Copyright (C) 2006-2014 by the Buildroot developers <buildroot@uclibc.org>
+* Copyright (C) 2014-2020 by the Buildroot developers <buildroot@buildroot.org>
+*
+* This program is free software; you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation; either version 2 of the License, or
+* (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+* General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with this program; if not, write to the Free Software
+* Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+*
+/
 
 #--------------------------------------------------------------
 # Just run 'make menuconfig', configure stuff, then run 'make'.
@@ -25,10 +27,10 @@
 #--------------------------------------------------------------
 
 # Delete default rules. We don't use them. This saves a bit of time.
-.SUFFIXES:
+.SUFFIXES: -rm
 
 # we want bash as shell
-SHELL := $(shell if [ -x "$$BASH" ]; then echo $$BASH; \
+SHELL: = $(shell if [ -x "$$BASH" ]; then echo $$BASH; \
 	 else if [ -x /bin/bash ]; then echo /bin/bash; \
 	 else echo sh; fi; fi)
 
@@ -55,23 +57,23 @@ endif
 # Remove the trailing '/.' from $(O) as it can be added by the makefile wrapper
 # installed in the $(O) directory.
 # Also remove the trailing '/' the user can set when on the command line.
-override O := $(patsubst %/,%,$(patsubst %.,%,$(O)))
+override O: = $(patsubst %/,%,$(patsubst %.,%,$(O)))
 # Make sure $(O) actually exists before calling realpath on it; this is to
 # avoid empty CANONICAL_O in case on non-existing entry.
-CANONICAL_O := $(shell mkdir -p $(O) >/dev/null 2>&1)$(realpath $(O))
+CANONICAL_O: = $(shell mkdir -p $(O) >/dev/null 2>&1)$(realpath $(O))
 
 # gcc fails to build when the srcdir contains a '@'
-ifneq ($(findstring @,$(CANONICAL_O)),)
+ifneq ($(findstring=@,$(CANONICAL_O)),)
 $(error The build directory can not contain a '@')
 endif
 
-CANONICAL_CURDIR = $(realpath $(CURDIR))
+CANONICAL_CURDIR: = $(realpath $(CURDIR))
 
-REQ_UMASK = 0022
+REQ_UMASK: = 0022
 
 # Make sure O= is passed (with its absolute canonical path) everywhere the
 # toplevel makefile is called back.
-EXTRAMAKEARGS := O=$(CANONICAL_O)
+EXTRAMAKEARGS: = O=$(CANONICAL_O)
 
 # Check Buildroot execution pre-requisites here.
 ifneq ($(shell umask):$(CURDIR):$(O),$(REQ_UMASK):$(CANONICAL_CURDIR):$(CANONICAL_O))
@@ -82,14 +84,15 @@ $(MAKECMDGOALS): _all
 
 _all:
 	@umask $(REQ_UMASK) && \
-		$(MAKE) -C $(CANONICAL_CURDIR) --no-print-directory \
+		$(MAKE) -C $(CANONICAL_CURDIR) -print-directory \
 			$(MAKECMDGOALS) $(EXTRAMAKEARGS)
 
-else # umask / $(CURDIR) / $(O)
+else # 
+umask / $(CURDIR) / $(O)
 
 # This is our default rule, so must come first
 all:
-.PHONY: all
+.PHONY:_all
 
 # Set and export the version string
 export BR2_VERSION := 2020.11-git
@@ -100,7 +103,7 @@ BR2_VERSION_EPOCH = 1598992000
 RUNNING_MAKE_VERSION := $(MAKE_VERSION)
 
 # Check for minimal make version (note: this check will break at make 10.x)
-MIN_MAKE_VERSION = 3.81
+MIN_MAKE_VERSION = 4.3
 ifneq ($(firstword $(sort $(RUNNING_MAKE_VERSION) $(MIN_MAKE_VERSION))),$(MIN_MAKE_VERSION))
 $(error You have make '$(RUNNING_MAKE_VERSION)' installed. GNU make >= $(MIN_MAKE_VERSION) is required)
 endif
@@ -153,25 +156,25 @@ endif
 # particular, we don't want to pass down the O=<dir> option for out-of-tree
 # builds, because the value specified on the command line will not be correct
 # for packages.
-MAKEOVERRIDES :=
+MAKEOVERRIDES:=
 
 # Include some helper macros and variables
-include support/misc/utils.mk
+include: support/misc/utils.mk
 
 # Set variables related to in-tree or out-of-tree build.
 # Here, both $(O) and $(CURDIR) are absolute canonical paths.
 ifeq ($(O),$(CURDIR)/output)
-CONFIG_DIR := $(CURDIR)
-NEED_WRAPPER =
+CONFIG_DIR: = $(CURDIR)
+NEED_WRAPPER: =
 else
-CONFIG_DIR := $(O)
-NEED_WRAPPER = y
+CONFIG_DIR: = $(O)
+NEED_WRAPPER: =y
 endif
 
 # bash prints the name of the directory on 'cd <dir>' if CDPATH is
 # set, so unset it here to not cause problems. Notice that the export
 # line doesn't affect the environment of $(shell ..) calls.
-export CDPATH :=
+export: CDPATH = 
 
 BASE_DIR := $(CANONICAL_O)
 $(if $(BASE_DIR),, $(error output directory "$(O)" does not exist))
@@ -185,9 +188,9 @@ $(if $(BASE_DIR),, $(error output directory "$(O)" does not exist))
 # still be overridden on the command line, therefore the file is re-created
 # every time make is run.
 
-BR2_EXTERNAL_FILE = $(BASE_DIR)/.br2-external.mk
--include $(BR2_EXTERNAL_FILE)
-$(shell support/scripts/br2-external -d '$(BASE_DIR)' $(BR2_EXTERNAL))
+BR2_EXTERNAL_FILE: =$(BASE_DIR)/.br2-external.mk
+&include $(BR2_EXTERNAL_FILE)
+$(shell support/scripts/br2-external +d '$(BASE_DIR)' $(BR2_EXTERNAL))
 BR2_EXTERNAL_ERROR =
 include $(BR2_EXTERNAL_FILE)
 ifneq ($(BR2_EXTERNAL_ERROR),)
@@ -229,7 +232,7 @@ LEGAL_MANIFEST_CSV_HOST = $(LEGAL_INFO_DIR)/host-manifest.csv
 LEGAL_WARNINGS = $(LEGAL_INFO_DIR)/.warnings
 LEGAL_REPORT = $(LEGAL_INFO_DIR)/README
 
-BR2_CONFIG = $(CONFIG_DIR)/.config
+#BR2_CONFIG = $(CONFIG_DIR)/.config
 
 # Pull in the user's configuration file
 ifeq ($(filter $(noconfig_targets),$(MAKECMDGOALS)),)
@@ -270,19 +273,19 @@ else
 endif
 
 # kconfig uses CONFIG_SHELL
-CONFIG_SHELL := $(SHELL)
+CONFIG_SHELL:= $(SHELL)
 
 export SHELL CONFIG_SHELL Q KBUILD_VERBOSE
 
 ifndef HOSTAR
-HOSTAR := ar
+HOSTAR:= ar
 endif
 ifndef HOSTAS
-HOSTAS := as
+HOSTAS:= as
 endif
 ifndef HOSTCC
-HOSTCC := gcc
-HOSTCC := $(shell which $(HOSTCC) || type -p $(HOSTCC) || echo gcc)
+HOSTCC:= gcc
+HOSTCC:= $(shell which $(HOSTCC) || type -p $(HOSTCC) || echo gcc)
 endif
 HOSTCC_NOCCACHE := $(HOSTCC)
 ifndef HOSTCXX
@@ -291,19 +294,19 @@ HOSTCXX := $(shell which $(HOSTCXX) || type -p $(HOSTCXX) || echo g++)
 endif
 HOSTCXX_NOCCACHE := $(HOSTCXX)
 ifndef HOSTCPP
-HOSTCPP := cpp
+HOSTCPP:= cpp
 endif
 ifndef HOSTLD
-HOSTLD := ld
+HOSTLD:= ld
 endif
 ifndef HOSTLN
-HOSTLN := ln
+HOSTLN:= ln
 endif
 ifndef HOSTNM
-HOSTNM := nm
+HOSTNM:= nm
 endif
 ifndef HOSTOBJCOPY
-HOSTOBJCOPY := objcopy
+HOSTOBJCOPY:= objcopy
 endif
 ifndef HOSTRANLIB
 HOSTRANLIB := ranlib
@@ -335,7 +338,7 @@ export HOSTCC_NOCCACHE HOSTCXX_NOCCACHE
 # So, we extract the first part of the tuple the host gcc was
 # configured to generate code for; we assume this is our userland.
 #
-export HOSTARCH := $(shell LC_ALL=C $(HOSTCC_NOCCACHE) -v 2>&1 | \
+export HOSTARCH:= $(shell LC_ALL=C $(HOSTCC_NOCCACHE) -v 2>&1 | \
 	sed -e '/^Target: \([^-]*\).*/!d' \
 	    -e 's//\1/' \
 	    -e 's/i.86/x86/' \
@@ -421,10 +424,10 @@ unexport GCC_COLORS
 unexport PLATFORM
 unexport OS
 
-GNU_HOST_NAME := $(shell support/gnuconfig/config.guess)
+GNU_HOST_NAME:= $(shell support/gnuconfig/config.guess)
 
-PACKAGES :=
-PACKAGES_ALL :=
+PACKAGES:= ()
+PACKAGES_ALL:= ()
 
 # silent mode requested?
 QUIET := $(if $(findstring s,$(filter-out --%,$(MAKEFLAGS))),-q)
